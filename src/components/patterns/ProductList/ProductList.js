@@ -1,21 +1,38 @@
 import React from 'react'
+import ProductListItem from "../ProductListItem";
 
-function ProductList({status, ...otherProps}) {
+// This is a simple loading component that we'll want to switch out later
+const Loading = () => <span>Loading</span>;
+const Error = ({ message }) => <span>An error has occurred! {message}</span>;
+
+export const statusTypes = {
+  loading: "loading",
+  errored: "errored",
+  loaded: "loaded",
+};
+
+function ProductList({status, data, onAddToCart}) {
   if(status === statusTypes.loading){
     return <Loading/>
   }
   if(status === statusTypes.errored){
     return <Error message="Failed to load data"/>
   }
-  return (
-    //standard output when data present.
-  )
+  return data.map((item) => (
+    <ProductListItem
+      key={item.id}
+      name={item.name}
+      price={item.price}
+      onAddToCart={() => {
+        onAddToCart(item.id);
+      }}
+      imageUrl={item.imageUrl}
+    />
+  ));
 }
 
-export const statusTypes = {
-    loading: "loading",
-    errored: "errored",
-    loaded: "loaded"
-};
-
 export default ProductList
+
+ProductList.defaultProps = {
+  status: statusTypes.loading,
+};
